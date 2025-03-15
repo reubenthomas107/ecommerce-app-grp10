@@ -31,7 +31,6 @@ resource "aws_subnet" "public_subnet_2" {
   
   tags = {
     Name = "ecapp-group10-public-subnet-2"
-    project = "midterm"
   }
 }
 
@@ -40,7 +39,6 @@ resource "aws_internet_gateway" "gw" {
 
   tags = {
     Name = "ecapp-group10-internet-gw"
-    project = "midterm"
   }
 }
 
@@ -48,7 +46,6 @@ resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
   tags = {
     Name = "ecapp-group10-public-rt"
-    project = "midterm"
   }
 }
 
@@ -78,7 +75,6 @@ resource "aws_subnet" "private_subnet_1" {
   
   tags = {
     Name = "ecapp-group10-private-subnet-1"
-    project = "midterm"
   }
 }
 
@@ -90,7 +86,6 @@ resource "aws_subnet" "private_subnet_2" {
 
   tags = {
     Name = "ecapp-group10-private-subnet-2"
-    project = "midterm"
   }
 }
 
@@ -98,7 +93,6 @@ resource "aws_route_table" "private_rt" {
   vpc_id = aws_vpc.main.id
   tags = {
     Name = "ecapp-group10-private-rt"
-    project = "midterm"
   }
 }
 
@@ -140,7 +134,6 @@ resource "aws_security_group" "web_sg" {
 
   tags = {
     Name = "ecapp-group10-ec2-sg"
-    project = "midterm"
   }
 }
 
@@ -163,6 +156,5 @@ resource "aws_security_group" "db_sg" {
 
   tags = {
     Name = "ecapp-group10-database-sg"
-    project = "midterm"
   }
 }
