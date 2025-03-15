@@ -26,3 +26,4 @@ terraform plan -out ecapp-infra-setup
 
 terraform apply ecapp-infra-setup
 ```
+
