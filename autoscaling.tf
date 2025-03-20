@@ -92,3 +92,21 @@ output "ecapp_web_url" {
   description = "ECommerce Group 10 - Webapp URL:"
   value       = "http://${aws_lb.ecapp_alb.dns_name}"
 }
+
+
+
+#Creating an Auto Scaling Policy for CPU Utilization (Target Tracking)
+resource "aws_autoscaling_policy" "cpu_target_tracking" {
+  name                   = "cpu-scaling-policy"
+  policy_type            = "TargetTrackingScaling"
+  autoscaling_group_name = aws_autoscaling_group.my_asg.name
+  
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    target_value = 50.0  # Scaling in/out when CPU utilization reaches 50%
+  }
+}
+
+#TODO: Create an auto-scaling policy (alarm and scale-in/out policy) based on ALB Request Count
