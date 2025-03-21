@@ -31,20 +31,25 @@ resource "aws_instance" "my_ubuntu_instance" {
         sudo systemctl restart apache2
 
         # Clone the latest code from GitHub
-        git clone https://github.com/reubenthomas107/ecommerce-app-grp10.git /tmp/ecapp
+        git clone -b feature/cdn https://github.com/reubenthomas107/ecommerce-app-grp10.git /tmp/ecapp
         sudo mv /tmp/ecapp/webapp/* /var/www/html
 
         # Fetch Database Credentials Securely
         DB_PASS=$(aws ssm get-parameter --name "/ecapp/db/password" --with-decryption --query "Parameter.Value" --output text)
         DB_HOST="${aws_db_instance.mysql.address}"
+        ECAPP_CDN_URL="${vars.cdn_url}" #TODO: Temp CDN URL
 
         echo "export DB_PASS=$DB_PASS" | sudo tee -a /etc/environment
         echo "export DB_HOST=$DB_HOST" | sudo tee -a /etc/environment
+        echo "export ECAPP_CDN_URL=$ECAPP_CDN_URL" | sudo tee -a /etc/environment
         source /etc/environment
 
         # Configure the application database connection dynamically
         sudo sed -i "s/DB_HOST_VALUE/$DB_HOST/g" /var/www/html/includes/connect.php
         sudo sed -i "s/DB_PASSWORD_VALUE/$DB_PASS/g" /var/www/html/includes/connect.php
+
+        #Configure CDN Endpoint for Static Resources
+        find . -type f \( -name "*.css" -o -name "*.php" \) -exec sudo sed -i "s|ECAPP_CDN_ENDPOINT_URL|$ECAPP_CDN_URL|g" {} +
 
         # Clean up installation files
         rm -rf /tmp/ecapp
@@ -66,22 +71,22 @@ resource "aws_instance" "my_ubuntu_instance" {
   }
 }
 
-resource "time_sleep" "wait-ubuntu" {
-  create_duration = "200s"
-  depends_on      = [aws_instance.my_ubuntu_instance]
-}
+# resource "time_sleep" "wait-ubuntu" {
+#   create_duration = "200s"
+#   depends_on      = [aws_instance.my_ubuntu_instance]
+# }
 
-resource "aws_ami_from_instance" "ecapp-websv-ami" {
-  name               = "ecapp-websv-ami"
-  source_instance_id = aws_instance.my_ubuntu_instance.id
-  depends_on         = [time_sleep.wait-ubuntu]
+# resource "aws_ami_from_instance" "ecapp-websv-ami" {
+#   name               = "ecapp-websv-ami"
+#   source_instance_id = aws_instance.my_ubuntu_instance.id
+#   depends_on         = [time_sleep.wait-ubuntu]
 
-  lifecycle {
-    ignore_changes = [
-      source_instance_id
-    ]
-  }
-}
+#   lifecycle {
+#     ignore_changes = [
+#       source_instance_id
+#     ]
+#   }
+# }
 
 
 

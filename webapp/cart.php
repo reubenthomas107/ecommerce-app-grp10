@@ -1,4 +1,5 @@
 <?php
+$cdn_url = 'ECAPP_CDN_ENDPOINT_URL';
 include('./includes/connect.php');
 include('./functions/common_functions.php');
 session_start();
@@ -10,8 +11,8 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecommerce Cart Details Page</title>
-    <link rel="stylesheet" href="./assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="./assets/css/main.css" />
+    <link rel="stylesheet" href="ECAPP_CDN_ENDPOINT_URL/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="ECAPP_CDN_ENDPOINT_URL/assets/css/main.css" />
 </head>
 
 <body>
@@ -129,6 +130,7 @@ session_start();
 
                         <!-- display data in cart  -->
                         <?php
+                        global $cdn_url;
                         $getIpAddress = getIPAddress();
                         $total_price = 0;
                         $cart_query = "SELECT * FROM `card_details` WHERE ip_address='$getIpAddress'";
@@ -167,7 +169,7 @@ session_start();
                                         <td>
                                             <?php echo $product_title; ?>
                                         </td>
-                                        <td><img src="./admin/product_images/<?php echo $product_image_one; ?>" class="img-thumbnail" alt="<?php echo $product_title; ?>"></td>
+                                        <td><img src="<?php echo $cdn_url; ?>/product_images/<?php echo $product_image_one; ?>" class="img-thumbnail" alt="<?php echo $product_title; ?>"></td>
                                         <td>
                                             <input type="number" class="form-control w-50 mx-auto" min="1" name="qty_<?php echo $product_id; ?>">
                                         </td>
@@ -294,7 +296,7 @@ session_start();
     </div> -->
     <!-- End Footer -->
 
-    <script src="./assets//js/bootstrap.bundle.js"></script>
+    <script src="ECAPP_CDN_ENDPOINT_URL/assets/js/bootstrap.bundle.js"></script>
 </body>
 
 </html>

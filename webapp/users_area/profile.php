@@ -13,8 +13,8 @@ if(!isset($_SESSION['username'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $_SESSION['username'];?> Profile</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.css" />
-    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="ECAPP_CDN_ENDPOINT_URL/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="ECAPP_CDN_ENDPOINT_URL/assets/css/main.css" />
 </head>
 
 <body>
@@ -220,7 +220,7 @@ if(!isset($_SESSION['username'])){
     </div> -->
     <!-- End Footer -->
 
-    <script src="../assets/js/bootstrap.bundle.js"></script>
+    <script src="ECAPP_CDN_ENDPOINT_URL/assets/js/bootstrap.bundle.js"></script>
 </body>
 
 </html>

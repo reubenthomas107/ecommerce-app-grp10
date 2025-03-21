@@ -3,3 +3,8 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "cdn_url" {
+  description = "The URL for the CDN"
+  type        = string
+}
