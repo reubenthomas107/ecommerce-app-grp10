@@ -31,7 +31,7 @@ resource "aws_instance" "my_ubuntu_instance" {
         sudo systemctl restart apache2
 
         # Clone the latest code from GitHub
-        git clone -b feature/cdn https://github.com/reubenthomas107/ecommerce-app-grp10.git /tmp/ecapp
+        git clone https://github.com/reubenthomas107/ecommerce-app-grp10.git /tmp/ecapp
         sudo mv /tmp/ecapp/webapp/* /var/www/html
 
         # Fetch Database Credentials Securely
