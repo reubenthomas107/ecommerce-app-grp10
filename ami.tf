@@ -37,7 +37,7 @@ resource "aws_instance" "my_ubuntu_instance" {
         # Fetch Database Credentials Securely
         DB_PASS=$(aws ssm get-parameter --name "/ecapp/db/password" --with-decryption --query "Parameter.Value" --output text)
         DB_HOST="${aws_db_instance.mysql.address}"
-        ECAPP_CDN_URL="${vars.cdn_url}" #TODO: Temp CDN URL
+        ECAPP_CDN_URL="${var.cdn_url}" #TODO: Temp CDN URL
 
         echo "export DB_PASS=$DB_PASS" | sudo tee -a /etc/environment
         echo "export DB_HOST=$DB_HOST" | sudo tee -a /etc/environment
