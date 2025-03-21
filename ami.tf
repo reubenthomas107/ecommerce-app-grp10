@@ -37,14 +37,19 @@ resource "aws_instance" "my_ubuntu_instance" {
         # Fetch Database Credentials Securely
         DB_PASS=$(aws ssm get-parameter --name "/ecapp/db/password" --with-decryption --query "Parameter.Value" --output text)
         DB_HOST="${aws_db_instance.mysql.address}"
+        ECAPP_CDN_URL="https://${aws_cloudfront_distribution.cdn.domain_name}"
 
         echo "export DB_PASS=$DB_PASS" | sudo tee -a /etc/environment
         echo "export DB_HOST=$DB_HOST" | sudo tee -a /etc/environment
+        echo "export ECAPP_CDN_URL=$ECAPP_CDN_URL" | sudo tee -a /etc/environment
         source /etc/environment
 
         # Configure the application database connection dynamically
         sudo sed -i "s/DB_HOST_VALUE/$DB_HOST/g" /var/www/html/includes/connect.php
         sudo sed -i "s/DB_PASSWORD_VALUE/$DB_PASS/g" /var/www/html/includes/connect.php
+
+        #Configure CDN Endpoint for Static Resources
+        find /var/www/html -type f \( -name "*.css" -o -name "*.php" \) -exec sudo sed -i "s|ECAPP_CDN_ENDPOINT_URL|$ECAPP_CDN_URL|g" {} +
 
         # Clean up installation files
         rm -rf /tmp/ecapp
@@ -64,6 +69,8 @@ resource "aws_instance" "my_ubuntu_instance" {
       security_groups
     ]
   }
+
+  depends_on = [ aws_cloudfront_distribution.cdn ]
 }
 
 resource "time_sleep" "wait-ubuntu" {

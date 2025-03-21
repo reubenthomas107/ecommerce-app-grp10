@@ -2,9 +2,11 @@
 // include connect file from DB
 // include('./includes/connect.php');
 // getting products
+$cdn_url = 'ECAPP_CDN_ENDPOINT_URL';
 function getProduct($numToDisplay = '')
 {
     global $con;
+    global $cdn_url;
     // condition to check isset or not 
     if (!isset($_GET['category'])) {
         if (!isset($_GET['brand'])) {
@@ -18,11 +20,11 @@ function getProduct($numToDisplay = '')
                 $product_price = $row['product_price'];
                 $category_id = $row['category_id'];
                 $brand_id = $row['brand_id'];
-                echo "
+                echo <<<HTML
         <div class='col-md-4 mb-2'>
         <div class='one-card'>
             <div class='photo'>
-                <img src='./admin/product_images/$product_image_one' alt='$product_title'>
+                <img src='{$cdn_url}/product_images/$product_image_one' alt='$product_title'>
                 <button>
                     <a class='text-light' href='products.php?add_to_cart=$product_id'>Add To Cart</a>
                 </button>
@@ -57,7 +59,7 @@ function getProduct($numToDisplay = '')
             </div>
         </div>
     </div>
-        ";
+HTML;
             }
         }
     }
@@ -66,6 +68,7 @@ function getProduct($numToDisplay = '')
 function filterCategoryProduct()
 {
     global $con;
+    global $cdn_url;
     // condition to check isset or not 
     if (isset($_GET['category'])) {
         $category_id = $_GET['category'];
@@ -84,11 +87,11 @@ function filterCategoryProduct()
             $product_price = $row['product_price'];
             $category_id = $row['category_id'];
             $brand_id = $row['brand_id'];
-            echo "
+            echo <<<HTML
         <div class='col-md-4 mb-2'>
         <div class='one-card'>
             <div class='photo'>
-                <img src='./admin/product_images/$product_image_one' alt='$product_title'>
+                <img src='{$cdn_url}/product_images/$product_image_one' alt='$product_title'>
                 <button>
                 <a class='text-light' href='products.php?add_to_cart=$product_id'>Add To Cart</a>
             </button>
@@ -123,7 +126,7 @@ function filterCategoryProduct()
             </div>
         </div>
     </div>
-        ";
+HTML;
         }
     }
 }
@@ -131,6 +134,7 @@ function filterCategoryProduct()
 function filterBrandProduct()
 {
     global $con;
+    global $cdn_url;
     // condition to check isset or not 
     if (isset($_GET['brand'])) {
         $brand_id = $_GET['brand'];
@@ -149,11 +153,11 @@ function filterBrandProduct()
             $product_price = $row['product_price'];
             $category_id = $row['category_id'];
             $brand_id = $row['brand_id'];
-            echo "
+            echo <<<HTML
         <div class='col-md-4 mb-2'>
         <div class='one-card'>
             <div class='photo'>
-                <img src='./admin/product_images/$product_image_one' alt='$product_title'>
+                <img src='{$cdn_url}/product_images/$product_image_one' alt='$product_title'>
                 <button>
                 <a class='text-light' href='products.php?add_to_cart=$product_id'>Add To Cart</a>
             </button>
@@ -188,7 +192,7 @@ function filterBrandProduct()
             </div>
         </div>
     </div>
-        ";
+HTML;
         }
     }
 }
@@ -236,6 +240,7 @@ function getCategories()
 function search_product()
 {
     global $con;
+    global $cdn_url;
     if (isset($_GET['search_data_btn'])) {
         $search_data_value = $_GET['search_data'];
         $search_product_query = "SELECT * FROM `products` WHERE product_title LIKE '%$search_data_value%' OR product_keywords LIKE '%$search_data_value%'";
@@ -253,11 +258,11 @@ function search_product()
             $product_price = $row['product_price'];
             $category_id = $row['category_id'];
             $brand_id = $row['brand_id'];
-            echo "
+            echo <<<HTML
         <div class='col-md-4 mb-2'>
         <div class='one-card'>
             <div class='photo'>
-                <img src='./admin/product_images/$product_image_one' alt='$product_title'>
+                <img src='{$cdn_url}/product_images/$product_image_one' alt='$product_title'>
                 <button>
                 <a class='text-light' href='products.php?add_to_cart=$product_id'>Add To Cart</a>
             </button>
@@ -292,7 +297,7 @@ function search_product()
             </div>
         </div>
     </div>
-        ";
+HTML;
         }
     }
 }
@@ -301,6 +306,7 @@ function search_product()
 function viewDetails()
 {
     global $con;
+    global $cdn_url;
     // condition to check isset or not 
     if (isset($_GET['product_id'])) {
         if (!isset($_GET['category'])) {
@@ -318,18 +324,18 @@ function viewDetails()
                     $product_price = $row['product_price'];
                     $category_id = $row['category_id'];
                     $brand_id = $row['brand_id'];
-                    echo "
+                    echo <<<HTML
                     <div class='row mx-0 justify-content-md-center gap-3 gap-md-0'>
                     <div class='col-md-2'>
                         <div class='prod-imgs'>
-                            <img src='./admin/product_images/$product_image_one' alt='$product_title'>
-                            <img src='./admin/product_images/$product_image_two' alt='$product_title'>
-                            <img src='./admin/product_images/$product_image_three' alt='$product_title'>
+                            <img src='{$cdn_url}/product_images/$product_image_one' alt='$product_title'>
+                            <img src='{$cdn_url}/product_images/$product_image_two' alt='$product_title'>
+                            <img src='{$cdn_url}/product_images/$product_image_three' alt='$product_title'>
                         </div>
                     </div>
                     <div class='col-md-5'>
                         <div class='main-img'>
-                            <img src='./admin/product_images/$product_image_one' alt='$product_title'>
+                            <img src='{$cdn_url}/product_images/$product_image_one' alt='$product_title'>
                         </div>
                     </div>
                     <div class='col-md-5'>
@@ -432,7 +438,7 @@ function viewDetails()
                         </div>
                     </div>
                 </div>
-                    ";
+HTML;
                 }
             }
         }
