@@ -48,7 +48,7 @@ resource "aws_instance" "my_ubuntu_instance" {
         sudo sed -i "s/DB_HOST_VALUE/$DB_HOST/g" /var/www/html/includes/connect.php
         sudo sed -i "s/DB_PASSWORD_VALUE/$DB_PASS/g" /var/www/html/includes/connect.php
 
-        #Configure CDN Endpoint for Static Resources
+        # Configure CDN Endpoint for Static Resources
         find /var/www/html -type f \( -name "*.css" -o -name "*.php" \) -exec sudo sed -i "s|ECAPP_CDN_ENDPOINT_URL|$ECAPP_CDN_URL|g" {} +
 
         # Clean up installation files
@@ -57,6 +57,21 @@ resource "aws_instance" "my_ubuntu_instance" {
 
         # Restart Apache to apply changes
         sudo systemctl restart apache2
+
+        # Setting up cron job for s3 file sync
+        sudo bash -c 'cat <<EOT > /opt/sync_script.sh
+        #!/bin/bash
+        LOG_FILE="/var/log/s3_sync.log"
+        aws s3 sync /var/www/html/admin/admin_images/ s3://ecapp-webapp-bucket/admin_images/ --size-only --delete &>> "\$LOG_FILE"
+        aws s3 sync /var/www/html/admin/product_images/ s3://ecapp-webapp-bucket/product_images/ --size-only --delete &>> "\$LOG_FILE"
+        aws s3 sync /var/www/html/users_area/user_images/ s3://ecapp-webapp-bucket/user_images/ --size-only --delete &>> "\$LOG_FILE"
+        aws s3 sync /var/www/html/assets/ s3://ecapp-webapp-bucket/assets/ --size-only --exclude ".DS_Store" --delete &>> "\$LOG_FILE"
+        echo "\$(date): S3 Sync Completed" >> "\$LOG_FILE"
+        EOT'
+        
+        #Setting execute permission and adding to cron (sync with s3 every 10 minutes)
+        sudo chmod +x /opt/sync_script.sh
+        (sudo crontab -l 2>/dev/null; echo "*/5 * * * * /opt/sync_script.sh") | sudo crontab -
         EOF 
 
   root_block_device {
@@ -74,7 +89,7 @@ resource "aws_instance" "my_ubuntu_instance" {
 }
 
 resource "time_sleep" "wait-ubuntu" {
-  create_duration = "200s"
+  create_duration = "100s"
   depends_on      = [aws_instance.my_ubuntu_instance]
 }
 
