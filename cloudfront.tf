@@ -21,7 +21,8 @@ resource "aws_s3_bucket_policy" "asset_access_policy" {
         Action    = "s3:GetObject"
         Resource  = ["${data.aws_s3_bucket.ecapp_static.arn}/assets/*",
                      "${data.aws_s3_bucket.ecapp_static.arn}/admin_images/*",
-                     "${data.aws_s3_bucket.ecapp_static.arn}/product_images/*"]
+                     "${data.aws_s3_bucket.ecapp_static.arn}/product_images/*",
+                     "${data.aws_s3_bucket.ecapp_static.arn}/user_images/*"]
       }
     ]
   })
