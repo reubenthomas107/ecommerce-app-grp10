@@ -50,6 +50,12 @@ resource "aws_lb_target_group" "ecapp_target_group" {
     healthy_threshold   = 2
     unhealthy_threshold = 6
   }
+
+   stickiness {
+    type = "lb_cookie"
+    # cookie_duration = 300
+   }
+
 }
 
 #Creating a Load Balancer
