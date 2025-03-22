@@ -44,12 +44,22 @@ resource "aws_wafv2_web_acl" "ecapp_waf" {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
+
+        rule_action_override {
+          action_to_use {
+            count {}
+          }
+          name = "SizeRestrictions_BODY"
+        }
       }
+      
     }
 
     override_action { 
-      none {} 
+      count {} 
     }
+
+    
 
     visibility_config {
       sampled_requests_enabled = true
