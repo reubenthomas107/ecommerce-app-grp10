@@ -19,7 +19,7 @@ resource "aws_db_instance" "mysql" {
     storage_type         = "gp2"
     engine              = "mysql"
     engine_version      = "8.0"
-    multi_az = "false" #TODO: set as true later
+    multi_az = "true"
     instance_class      = "db.t3.micro"
     identifier         = "ecapp-db"
     username           = "ecappadmin"
@@ -31,6 +31,10 @@ resource "aws_db_instance" "mysql" {
     publicly_accessible = "false"
     storage_encrypted = "true"
     skip_final_snapshot = "true"
+    backup_retention_period  = 7      
+    backup_window            = "05:00-06:00" 
+    apply_immediately        = true  
+    
 }
 
 # Create a new EC2 instance to import the database (initial setup)
