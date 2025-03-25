@@ -4,6 +4,10 @@ resource "aws_launch_template" "my_ecapp_launch_template" {
   image_id      = aws_ami_from_instance.ecapp-websv-ami.id
   instance_type = "t2.small"
   key_name      = "ecapp_keypair" 
+  
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ec2_profile.name
+  }
 
   network_interfaces {
     associate_public_ip_address = true
@@ -69,18 +73,41 @@ resource "aws_lb" "ecapp_alb" {
   enable_deletion_protection = false
 }
 
+#Certificate
+data "aws_acm_certificate" "ecapp_cert" {
+  domain   = "ecapp-group10.velixor.me"
+  statuses = ["ISSUED"]
+}
+
 #Creating a Listener
-resource "aws_lb_listener" "http" {
+resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.ecapp_alb.arn
-  port              = 80 #TODO: Change to 443 for HTTPS
-  protocol          = "HTTP"
-  #ssl_policy        = "ELBSecurityPolicy-2016-08"
-  #certificate_arn   = aws_acm_certificate.my_cert.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = data.aws_acm_certificate.ecapp_cert.arn
+
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ecapp_target_group.arn
   }
 }
+
+resource "aws_lb_listener" "http_redirect" {
+  load_balancer_arn = aws_lb.ecapp_alb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+    redirect {
+      protocol    = "HTTPS"
+      port        = "443"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
 
 #Associating the Auto Scaling Group with the Load Balancer
 resource "aws_autoscaling_attachment" "alb-asg-associate" {
