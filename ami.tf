@@ -55,6 +55,9 @@ resource "aws_instance" "my_ubuntu_instance" {
         rm -rf /tmp/ecapp
         sudo rm -rf /var/www/html/index.html
 
+        # Changing directory ownership to low privileged user
+        sudo chown -R www-data:www-data /var/www/html
+
         # Restart Apache to apply changes
         sudo systemctl restart apache2
 
@@ -69,9 +72,13 @@ resource "aws_instance" "my_ubuntu_instance" {
         echo "\$(date): S3 Sync Completed" >> "\$LOG_FILE"
         EOT'
         
-        #Setting execute permission and adding to cron (sync with s3 every 10 minutes)
+        # Setting execute permission and adding to cron (sync with s3 every 5 minutes)
         sudo chmod +x /opt/sync_script.sh
         (sudo crontab -l 2>/dev/null; echo "*/5 * * * * /opt/sync_script.sh") | sudo crontab -
+
+        # Installing CA SSL certificate for Database Transit Encryption
+        sudo mkdir -p /etc/mysql/ssl
+        sudo wget -O /etc/mysql/ssl/rds-combined-ca-bundle.pem https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
         EOF 
 
   root_block_device {
