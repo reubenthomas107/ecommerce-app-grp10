@@ -65,10 +65,10 @@ resource "aws_instance" "my_ubuntu_instance" {
         sudo bash -c 'cat <<EOT > /opt/sync_script.sh
         #!/bin/bash
         LOG_FILE="/var/log/s3_sync.log"
-        aws s3 sync /var/www/html/admin/admin_images/ s3://ecapp-webapp-bucket/admin_images/ --size-only --delete &>> "\$LOG_FILE"
-        aws s3 sync /var/www/html/admin/product_images/ s3://ecapp-webapp-bucket/product_images/ --size-only --delete &>> "\$LOG_FILE"
-        aws s3 sync /var/www/html/users_area/user_images/ s3://ecapp-webapp-bucket/user_images/ --size-only --delete &>> "\$LOG_FILE"
-        aws s3 sync /var/www/html/assets/ s3://ecapp-webapp-bucket/assets/ --size-only --exclude ".DS_Store" --delete &>> "\$LOG_FILE"
+        aws s3 sync /var/www/html/admin/admin_images/ s3://ecapp-webapp-bucket/admin_images/ --size-only &>> "\$LOG_FILE"
+        aws s3 sync /var/www/html/admin/product_images/ s3://ecapp-webapp-bucket/product_images/ --size-only &>> "\$LOG_FILE"
+        aws s3 sync /var/www/html/users_area/user_images/ s3://ecapp-webapp-bucket/user_images/ --size-only &>> "\$LOG_FILE"
+        aws s3 sync /var/www/html/assets/ s3://ecapp-webapp-bucket/assets/ --size-only --exclude ".DS_Store" &>> "\$LOG_FILE"
         echo "\$(date): S3 Sync Completed" >> "\$LOG_FILE"
         EOT'
         
