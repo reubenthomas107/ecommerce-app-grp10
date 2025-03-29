@@ -82,7 +82,55 @@ resource "aws_cloudfront_distribution" "cdn" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+
+  # logging_config {
+  #   bucket = aws_s3_bucket.cloudfront_logs.bucket_domain_name
+  #   prefix = "cloudfront-logs/"
+  #   include_cookies = false
+  # }
 }
+
+
+#Create S3 bucket for storing logs
+resource "aws_s3_bucket" "cloudfront_logs" {
+  bucket = "ecapp-cloudfront-logs-bucket"
+  #acl    = "log-delivery-write"
+  #force_destroy = true
+}
+
+# resource "aws_s3_bucket_ownership_controls" "cloudfront_logs_ownership" {
+#   bucket = aws_s3_bucket.cloudfront_logs.id
+#   rule {
+#     object_ownership = "ObjectWriter"  # Allows CloudFront to write logs
+#   }
+# }
+
+# #Bucket policy for CloudFront logs
+resource "aws_s3_bucket_policy" "cloudfront_logs_policy" {
+  bucket = aws_s3_bucket.cloudfront_logs.id
+
+  policy = jsonencode({
+  Version = "2012-10-17"
+  Statement = [
+    {
+      Sid       = "AllowCloudFrontLogs"
+      Effect    = "Allow"
+      Principal = {
+        Service = "cloudfront.amazonaws.com"
+      }
+      Action    = "s3:PutObject"
+      Resource  = "${aws_s3_bucket.cloudfront_logs.arn}/cloudfront-logs/*"  # Correct ARN format
+      Condition = {
+        StringEquals = {
+          "AWS:SourceArn" = aws_cloudfront_distribution.cdn.arn
+        }
+      }
+    }
+  ]
+})
+}
+
+
 
 output "ecapp_cdn_domain_name" {
   description = "CloudFront Distribution Domain Name"

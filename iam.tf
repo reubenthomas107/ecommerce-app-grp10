@@ -47,6 +47,26 @@ resource "aws_iam_policy" "ec2_s3_policy" {
   })
 }
 
+resource "aws_iam_policy" "cloudwatch_logs_policy" {
+  name        = "cloudwatch-logs-policy"
+  description = "Policy to allow CloudWatch Logs actions for EC2 instances"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "arn:aws:logs:*:*:*"
+      }
+    ]
+  })
+}
+
 
 # Attach the SSM policy to the role
 resource "aws_iam_role_policy_attachment" "ssm_policy" {
@@ -57,5 +77,11 @@ resource "aws_iam_role_policy_attachment" "ssm_policy" {
 # Attach the S3 policy to the role
 resource "aws_iam_role_policy_attachment" "s3_policy" {
   policy_arn = aws_iam_policy.ec2_s3_policy.arn
+  role       = aws_iam_role.ec2_role.name
+}
+
+# Attach the CloudWatch Logs policy to the role
+resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy" {
+  policy_arn = aws_iam_policy.cloudwatch_logs_policy.arn
   role       = aws_iam_role.ec2_role.name
 }

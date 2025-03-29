@@ -79,6 +79,36 @@ resource "aws_instance" "my_ubuntu_instance" {
         # Installing CA SSL certificate for Database Transit Encryption
         sudo mkdir -p /etc/mysql/ssl
         sudo wget -O /etc/mysql/ssl/rds-combined-ca-bundle.pem https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+
+
+        # Configure CloudWatch Agent
+        sudo wget -P /tmp https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+        sudo dpkg -i /tmp/amazon-cloudwatch-agent.deb
+        sudo bash -c 'cat <<EOT > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+        {
+          "logs": {
+            "logs_collected": {
+              "files": {
+              "collect_list": [
+                {
+                "file_path": "/var/log/apache2/access.log",
+                "log_group_name": "ecapp-web-logs/apache-access-logs",
+                "log_stream_name": "{instance_id}"
+                },
+                {
+                "file_path": "/var/log/apache2/error.log",
+                "log_group_name": "ecapp-web-logs/apache-error-logs",
+                "log_stream_name": "{instance_id}"
+                }
+              ]
+              }
+            }
+          }
+        }
+        EOT'
+
+        # Start the CloudWatch Agent
+        sudo amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
         EOF 
 
   root_block_device {

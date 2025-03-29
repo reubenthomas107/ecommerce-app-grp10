@@ -99,3 +99,12 @@ resource "aws_wafv2_web_acl_association" "ecapp_waf_alb_association" {
 }
 
 #TODO: Enable CloudWatch Logs
+resource "aws_cloudwatch_log_group" "waf_logs" {
+  name = "aws-waf-logs-ecapp-log-group"
+}
+
+# Enable WAF Logging
+resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
+  log_destination_configs = [aws_cloudwatch_log_group.waf_logs.arn]
+  resource_arn            = aws_wafv2_web_acl.ecapp_waf.arn
+}
