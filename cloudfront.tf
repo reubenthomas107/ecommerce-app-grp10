@@ -83,29 +83,29 @@ resource "aws_cloudfront_distribution" "cdn" {
     cloudfront_default_certificate = true
   }
 
-  logging_config {
-    bucket = aws_s3_bucket.cloudfront_logs.bucket_domain_name
-    prefix = "cloudfront-logs/"
-    include_cookies = false
-  }
+  # logging_config {
+  #   bucket = aws_s3_bucket.cloudfront_logs.bucket_domain_name
+  #   prefix = "cloudfront-logs/"
+  #   include_cookies = false
+  # }
 }
 
 
 #Create S3 bucket for storing logs
 resource "aws_s3_bucket" "cloudfront_logs" {
   bucket = "ecapp-cloudfront-logs-bucket"
-  acl    = "log-delivery-write"
+  #acl    = "log-delivery-write"
   #force_destroy = true
 }
 
-resource "aws_s3_bucket_ownership_controls" "cloudfront_logs_ownership" {
-  bucket = aws_s3_bucket.cloudfront_logs.id
-  rule {
-    object_ownership = "ObjectWriter"  # Allows CloudFront to write logs
-  }
-}
+# resource "aws_s3_bucket_ownership_controls" "cloudfront_logs_ownership" {
+#   bucket = aws_s3_bucket.cloudfront_logs.id
+#   rule {
+#     object_ownership = "ObjectWriter"  # Allows CloudFront to write logs
+#   }
+# }
 
-#Bucket policy for CloudFront logs
+# #Bucket policy for CloudFront logs
 resource "aws_s3_bucket_policy" "cloudfront_logs_policy" {
   bucket = aws_s3_bucket.cloudfront_logs.id
 
