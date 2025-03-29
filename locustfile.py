@@ -8,17 +8,17 @@ class EcappUser(FastHttpUser):
 
     @task(200) 
     def view_products(self): #Request to view products
-        response = self.client.post("/products.php")
+        response = self.client.get("/products.php")
 
     @task(100) 
     def view_item(self): #Request to view a specific item
-        response = self.client.post("/products.php", params={
+        response = self.client.get("/products.php", params={
             "product_id": "1"
         })
 
     @task(5)
     def add_to_cart(self): #Request to add a product to the cart
-        response = self.client.post("/cart.php", params={
+        response = self.client.get("/cart.php", params={
             "add_to_cart": "3"
         })
 
